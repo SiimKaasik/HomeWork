@@ -1,0 +1,306 @@
+<!doctype html>
+
+<html manifest="manifest.appcache">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" 
+              content="width=device-width initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <meta name="apple-mobile-web-app-capable" content="yes"> <!--iPhone eraldi djeela, avaneb full-screenis nagu tavaline app-->
+        
+        <meta name="apple-mobile-web-app-status-bar-style" content = "black-translucent"> <!-- Peaks muutuma mustaks kui avada bookmarkina iPhonel -->
+        
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.css" />
+                
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js"></script>
+
+        
+        <style>
+            div[data-role = footer] {
+            -webkit-user-select: none; <!--Ei lase ala selectida-->
+            }
+            form {
+                max-width: 300px;
+                margin:20px auto;
+}
+.search {
+                padding:8px 15px;
+                background:rgba(50, 50, 50, 0.2);
+                border:0px solid #dbdbdb;
+}
+.button {
+                position:relative;
+                padding:6px 15px;
+                left:-8px;
+                border:2px solid #207cca;
+                background-color:#207cca;
+                color:#fafafa;
+}
+.button:hover  {
+                background-color:#fafafa;
+                color:#207cca;
+}
+
+#array{
+    max-width: 300px;
+}
+
+        </style>
+    </head>
+
+        <body>
+
+
+
+
+<div data-role="page" data-dialog="true" id="pagefour">
+  <div data-role="header">
+    <h1>Movie Specifics</h1>
+  </div>
+<div data-role="main" class="ui-content">
+<p id="trailer"></p>
+</div>
+  <div data-role="main" class="ui-content">
+    
+    <p id="specs"></p>
+    
+  </div>
+
+  <div data-role="footer" data-position="fixed">
+    <h1></h1>
+  </div>
+</div> 
+
+
+
+<div data-role="page" id="pagetwo">
+  <div data-role="header" data-position="fixed">
+    <h1>Movie App</h1>
+    <div data-role="navbar" data-position="fixed">
+      <ul>
+        <li><a href="#pageone" data-icon="home">Popular Movies</a></li>
+        <li><a href="#pagetwo" data-icon="arrow-r">Watchlist</a></li>
+        <li><a href="#pagethree"  data-icon="search">Search</a></li>
+      </ul>
+    </div>
+  </div>
+<div data-role="main" class="ui-content">
+    <p id="demomine"></p> 
+  </div>
+  <div data-role="footer" data-position = "fixed">
+    <h1>™</h1>
+  </div>
+</div> 
+
+
+
+<div data-role="page" id="pagethree">
+  <div data-role="header" data-position="fixed">
+    <h1>Movie App</h1>
+    <div data-role="navbar" data-position="fixed">
+      <ul>
+        <li><a href="#pageone" data-icon="home">Popular Movies</a></li>
+        <li><a href="#pagetwo" data-icon="arrow-r">Watchlist</a></li>
+        <li><a href="#pagethree" data-icon="search">Search</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div data-role="main" class="ui-content">
+    <p> <input type="search" list="searches">
+                <datalist id="searches"></datalist>
+                 <button type="button">Search</button> </p> 
+                 <p id="info"></p>
+  </div>
+    <div data-role="footer" data-position = "fixed">
+    <h1>™</h1>
+  </div> 
+</div> 
+
+
+<div data-role="page" id="pageone">
+  <div data-role="header" data-position="fixed">
+    <h1>Movie App</h1>
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#pageone" data-icon="home">Popular Movies</a></li>
+        <li><a href="#pagetwo" data-icon="arrow-r">Watchlist</a></li>
+        <li><a href="#pagethree" data-icon="search">Search</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div data-role="main" class="ui-content">
+                 <a id="matsioon"</a> 
+  </div>
+     
+
+    
+  <div data-role="footer" data-position = "fixed">
+    <h1>™</h1>
+  </div> 
+</div> 
+
+
+
+
+<script>            
+
+
+                $('button').click(function(){
+                   var search = $('input').val();
+                    var url = 'http://api.themoviedb.org/3/search/movie?query='+search+'&api_key=42a8123408c5a55c08ab4a2bb5b4fa76';
+                    $.getJSON(url, function(data){
+                        console.log(data);
+                    saveSearch(search);
+                         for(var i = 0; i < 100; i++){
+                           $('#info').append( '<br>' + '<form>' + data.results[i].title +'</form>');  
+                         
+                       
+                         $('#info').append('<form>' + 'Release Date: ' + data.results[i].release_date+'</form>');
+                        
+
+                       $('#info').append('<form>' + '<img onclick="makeDetails('+data.results[i].id+');trailer('+data.results[i].id+')" src= "' + 'http://image.tmdb.org/t/p/w300' + data.results[i].poster_path + '">'+' <input type ="button" value="Add '+data.results[i].title+' to Watchlist" class="ui-btn" id="array" onclick="makeArray('+data.results[i].id+')"></form>');
+
+                       
+
+                    }
+                        
+                       
+                    });
+                });
+                function saveSearch(search){
+                
+                    if(typeof(Storage) !== 'undefined'){
+                        var searches = localStorage['searches'];
+                        if(searches === undefined){
+                            searches = "[]";   
+                        }
+                    //String to JSON    
+                    var searchObject = JSON.parse(searches);
+                    //Add new
+                    searchObject.push(search);    
+                    // Save
+                    localStorage['searches'] = JSON.stringify(searchObject);
+                        loadSearches();
+                    }
+                }
+
+                                  
+                    function loadSearches(){
+                           if(typeof(Storage) !== 'undefined' && localStorage['searches'] !== 'undefined'){
+                                var searches = JSON.parse(localStorage['searches']);          
+                               $('#searches').empty();
+                                for(var i = 0; i < searches.length; i++){
+                                    $('#searches').append('<option value="' + searches[i] + '"' );   
+                                                          
+                                }
+                           }
+                    }
+                loadSearches();
+                
+
+
+                  
+
+
+                  $(document).ready(function(){
+                    
+                    var url = 'http://api.themoviedb.org/3/movie/popular?query&api_key=42a8123408c5a55c08ab4a2bb5b4fa76';
+                   
+                    $.getJSON(url, function(data){
+                        
+                        console.log('pealkiri',data);
+                         for(var i = 0; i < 100; i++){
+                         
+                       $('#matsioon').append('<div data-role="page"><div data-role="panel" id="mypanel">minu paneel</div>');
+                        $('#matsioon').append( '<br>' +  '<form>' + data.results[i].title +'</form>');  
+
+
+                         $('#matsioon').append('<form>' + 'Release Date: ' + data.results[i].release_date+'</form>');
+                         
+                       $('#matsioon').append('<form><img onclick="makeDetails('+data.results[i].id+');trailer('+data.results[i].id+')" src= "' + 'http://image.tmdb.org/t/p/w300' + data.results[i].poster_path + '">'+' <input type ="button" value="Add '+data.results[i].title+' to Watchlist" class="ui-btn" id="array" onclick="makeArray('+data.results[i].id+')"></form>');
+                        
+
+                        }
+                        
+                    });
+
+
+                });
+
+
+function makeArray(nr){
+var url = 'https://api.themoviedb.org/3/movie/'+nr+'?api_key=42a8123408c5a55c08ab4a2bb5b4fa76';
+var movies = localStorage['movies'];
+
+                        
+                        if(movies === undefined){
+                            movies = [];   
+                        }
+                    
+//var movieObject = JSON.parse(movies);
+console.log(movies);
+    $.getJSON(url, function(data){
+    console.log('TeinePealkiri',data);
+    
+
+movies.unshift($('#demomine').append('<form>' + data.title +'</form>') + $('#demomine').append('<form>' + 'Release Date: ' + data.release_date+'</form>') + $('#demomine').append('<form>'+' <input type ="button" value="Remove '+data.title+' from Watchlist" class="ui-btn" id="array" onclick="removeArray('+nr+')"></form>' + '<form><img onclick="makeDetails('+data.id+');trailer('+data.id+')" src= "' + 'http://image.tmdb.org/t/p/w300' + data.poster_path + '" alt="Submit"></form>' ));
+
+
+    });
+
+    document.getElementById("demomine").innerHTML = movies;
+    document.getElementById("array").value="Added to Watchlist";
+
+
+}
+
+function trailer(trail){
+var url = 'https://api.themoviedb.org/3/movie/'+trail+'?api_key=42a8123408c5a55c08ab4a2bb5b4fa76&append_to_response=releases,trailers';
+var trailers = [""];
+$.getJSON(url, function(data){
+    console.log('Trailerid',data);
+
+    trailers.push($('#trailer').append('<form>' + '<iframe width="300" height="200" class="youtube-player" type="text/html" src="https://www.youtube.com/v/'+data.trailers.youtube[0].source+ '" frameborder="0"></iframe></form>'));
+});
+    document.getElementById("trailer").innerHTML = trailers;
+}
+
+function removeArray(remo){
+    var movies = localStorage['movies'];
+    
+    var url = 'https://api.themoviedb.org/3/movie/'+remo+'?api_key=42a8123408c5a55c08ab4a2bb5b4fa76';
+    $.getJSON(url, function(data){
+    console.log('KolmasPealkiri',data);
+    movies.pop($('#demomine').append('<form>' + data.title +'</form>') + $('#demomine').append('<form>' + 'Release Date: ' + data.release_date+'</form>') + $('#demomine').append('<form>' + '<img src= "' + 'http://image.tmdb.org/t/p/w300' + data.poster_path + '" alt="Submit"></form>'));
+
+});
+
+document.getElementById("demomine").innerHTML = movies;
+
+}
+
+    function makeDetails(uno){
+        var url = 'https://api.themoviedb.org/3/movie/'+uno+'?api_key=42a8123408c5a55c08ab4a2bb5b4fa76';
+        var details = [""];
+         $.getJSON(url, function(data){
+         console.log('Detailid',data);
+         details.unshift($('#specs').append('<form>' + data.title +'</form>') + $('#specs').append('<form>' + data.overview +'</form>') + $('#specs').append('<form>' + 'Release Date: ' + data.release_date+'</form>') + $('#specs').append('<form>' + '<input type="image" src= "' + 'http://image.tmdb.org/t/p/w300' + data.poster_path + '" alt="Submit"></form>'));
+         
+        });
+         document.getElementById("specs").innerHTML = details;
+         $.mobile.navigate( "#pagefour", { transition : "pop"});
+}
+
+            </script>
+
+             
+        </body>
+    
+
+</html>
